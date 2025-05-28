@@ -24,3 +24,55 @@ RSpec.describe Order do
   it "runs test 1" { puts "Test 1" }
   it "runs test 2" { puts "Test 2" }
 end
+```
+---
+
+##  Memoization Using `let`
+
+### What is `let`?
+
+`let` defines a **lazy-evaluated, memoized helper method**. The value is computed the first time it's accessed in an example (`it` block) and then reused.
+
+###  Benefits:
+
+- Clean, DRY test setup
+- Faster execution (lazy evaluation)
+- Safer tests (memoized per example)
+
+###  Example:
+
+```ruby
+class User
+  attr_accessor :name, :email
+
+  def initialize(name, email)
+    @name = name
+    @email = email
+  end
+
+  def valid?
+    !name.nil? && !email.nil?
+  end
+end
+
+RSpec.describe User do
+  let(:user) { User.new("Alice", "john@doe.com") }
+
+  it "checks multiple properties of user" do
+    user.name = "Bob"
+    expect(user.name).to eq("Bob")
+    expect(user).to be_a(User)
+    expect(user.valid?).to be true
+  end
+end
+```
+
+---
+
+##  `let` vs `let!` vs `before`
+
+| Feature     | `let`                  | `let!`                   | `before`              |
+|-------------|------------------------|--------------------------- | ------------------------|
+| Lazy?       |  Yes (on first use)    |  No (always evaluated)      |  No                  |
+| Memoized?   |  Yes                   |  Yes                        |  No                  |
+| Purpose     | Define test data        | Setup code w/ return value | Side effects/setup    
